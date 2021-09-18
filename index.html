@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Mathematics</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+    }
+
+    canvas {
+      width: 100vw;
+      height: 100vh;
+      display: block;
+    }
+
+    .point {
+      position: absolute;
+      width: 0.5rem;
+      height: 0.5rem;
+      border-radius: 50%;
+      background-color: red;
+      transform: translate(-0.25rem, -0.25rem);
+      pointer-events: none;
+    }
+
+    .menu {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 2rem;
+      border-right: 1px solid black;
+      background-color: white;
+    }
+
+    .menu-button {
+      border-bottom: 1px solid black;
+      width: 2rem;
+      height: 2rem;
+      line-height: 2rem;
+      text-align: center;
+      user-select: none;
+    }
+
+    .menu-button:hover {
+      background-color: hsl(0deg, 0%, 90%);
+    }
+
+    .menu-button:active {
+      background-color: hsl(0deg, 0%, 70%);
+    }
+  </style>
+</head>
+<body>
+<div class="menu">
+  <div class="menu-button">A</div>
+  <div class="menu-button">B</div>
+</div>
+<canvas></canvas>
+<div class="point"></div>
+
+<script>
+  let mode = 0
+
+  const $menu = document.querySelector('.menu')
+  const $menuButtons = Array.from($menu.querySelectorAll('.menu-button'))
+  $menu.addEventListener('click', function (event) {
+    const target = event.target
+    if (target.classList.contains('menu-button')) {
+      event.stopPropagation()
+      const $menuButton = target
+      const index = $menuButtons.indexOf($menuButton)
+      mode = index
+    }
+  })
+
+  const canvas = document.querySelector('canvas')
+  canvas.width = window.innerWidth
+  canvas.height = window.innerHeight
+  const context = canvas.getContext('2d')
+
+  const point = document.querySelector('.point')
+
+  const points = []
+
+  window.addEventListener('pointerdown', function (event) {
+
+  })
+
+  window.addEventListener('pointermove', function (event) {
+    point.style.left = event.clientX + 'px'
+    point.style.top = event.clientY + 'px'
+
+    if (mode === 1) {
+      if (points.length >= 1) {
+        clearCanvas()
+        const a = points[0]
+        const b = {x: event.clientX, y: event.clientY}
+        renderConnectionWithSlopeTriangle(a, b)
+      }
+    }
+  })
+
+  window.addEventListener('pointerup', function (event) {
+
+  })
+
+  window.addEventListener('click', function (event) {
+    const point = {x: event.clientX, y: event.clientY}
+    points.push(point)
+    renderPoint(point)
+    if (mode === 0) {
+      if (points.length === 2) {
+        const a = points[0]
+        const b = points[1]
+        renderConnectionWithSlopeTriangle(a, b)
+      }
+    }
+  })
+
+  function renderConnectionWithSlopeTriangle(a, b) {
+    renderLine(a, b)
+    renderSlopeTriangle(a, b)
+    renderPoint(a)
+    renderPoint(b)
+  }
+
+  function clearCanvas() {
+    context.clearRect(0, 0, canvas.width, canvas.height)
+  }
+
+  function render() {
+    points.forEach(renderPoint)
+  }
+
+  function renderPoint(point) {
+    context.save()
+    context.beginPath()
+    context.fillStyle = 'red'
+    const {x, y} = point
+    context.arc(x, y, 4, 0, 2 * Math.PI)
+    context.fill()
+    context.restore()
+  }
+
+  function renderLine(a, b) {
+    context.save()
+    context.beginPath()
+    context.strokeStyle = 'black'
+    context.moveTo(a.x, a.y)
+    context.lineTo(b.x, b.y)
+    context.stroke()
+    context.restore()
+  }
+
+  function renderSlopeTriangle(a, b) {
+    context.save()
+    context.beginPath()
+    context.strokeStyle = 'black'
+    context.moveTo(a.x, a.y)
+    context.lineTo(b.x, a.y)
+    context.lineTo(b.x, b.y)
+    context.stroke()
+    context.restore()
+  }
+</script>
+</body>
+</html>
