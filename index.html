@@ -58,12 +58,14 @@
 <div class="menu">
   <div class="menu-button">A</div>
   <div class="menu-button">B</div>
+  <div class="menu-button">C</div>
 </div>
 <canvas></canvas>
 <div class="point"></div>
 
 <script>
   let mode = 0
+  let points = []
 
   const $menu = document.querySelector('.menu')
   const $menuButtons = Array.from($menu.querySelectorAll('.menu-button'))
@@ -74,8 +76,14 @@
       const $menuButton = target
       const index = $menuButtons.indexOf($menuButton)
       mode = index
+      reset()
     }
   })
+
+  function reset() {
+    points = []
+    clearCanvas()
+  }
 
   const canvas = document.querySelector('canvas')
   canvas.width = window.innerWidth
@@ -83,8 +91,6 @@
   const context = canvas.getContext('2d')
 
   const point = document.querySelector('.point')
-
-  const points = []
 
   window.addEventListener('pointerdown', function (event) {
 
@@ -118,14 +124,25 @@
         const b = points[1]
         renderConnectionWithSlopeTriangle(a, b)
       }
+    } else if (mode === 2) {
+      if (points.length >= 2) {
+        const a = points[points.length - 2]
+        const b = points[points.length - 1]
+        renderConnection(a, b)
+      }
+    }
+  })
+
+  window.addEventListener('contextmenu', function (event) {
+    if (mode === 2) {
+      event.preventDefault()
+      points = []
     }
   })
 
   function renderConnectionWithSlopeTriangle(a, b) {
-    renderLine(a, b)
+    renderConnection(a, b)
     renderSlopeTriangle(a, b)
-    renderPoint(a)
-    renderPoint(b)
   }
 
   function clearCanvas() {
@@ -146,7 +163,7 @@
     context.restore()
   }
 
-  function renderLine(a, b) {
+  function renderConnection(a, b) {
     context.save()
     context.beginPath()
     context.strokeStyle = 'black'
@@ -154,6 +171,8 @@
     context.lineTo(b.x, b.y)
     context.stroke()
     context.restore()
+    renderPoint(a)
+    renderPoint(b)
   }
 
   function renderSlopeTriangle(a, b) {
@@ -165,6 +184,8 @@
     context.lineTo(b.x, b.y)
     context.stroke()
     context.restore()
+    renderPoint(a)
+    renderPoint(b)
   }
 </script>
 </body>
