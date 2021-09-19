@@ -4,18 +4,8 @@
   <meta charset="utf-8">
   <title>Mathematics</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="unnamed/createFullDocumentCanvas/createFullDocumentCanvas.css">
   <style>
-    body {
-      margin: 0;
-      height: 100vh;
-    }
-
-    canvas {
-      width: 100vw;
-      height: 100vh;
-      display: block;
-    }
-
     .point {
       position: absolute;
       width: 0.5rem;
@@ -35,6 +25,8 @@
       border-right: 1px solid black;
       background-color: white;
     }
+
+    /* TODO: Active menu item */
 
     .menu-button {
       border-bottom: 1px solid black;
@@ -60,10 +52,11 @@
   <div class="menu-button">B</div>
   <div class="menu-button">C</div>
 </div>
-<canvas></canvas>
 <div class="point"></div>
 
-<script>
+<script type="module">
+  import { createFullDocumentCanvas } from './unnamed/createFullDocumentCanvas/createFullDocumentCanvas.js'
+
   let mode = 0
   let points = []
 
@@ -85,10 +78,8 @@
     clearCanvas()
   }
 
-  const canvas = document.querySelector('canvas')
-  canvas.width = window.innerWidth
-  canvas.height = window.innerHeight
-  const context = canvas.getContext('2d')
+  const { canvas, context } = createFullDocumentCanvas()
+  document.body.appendChild(canvas)
 
   const point = document.querySelector('.point')
 
@@ -104,7 +95,7 @@
       if (points.length >= 1) {
         clearCanvas()
         const a = points[0]
-        const b = {x: event.clientX, y: event.clientY}
+        const b = { x: event.clientX, y: event.clientY }
         renderConnectionWithSlopeTriangle(a, b)
       }
     }
@@ -115,7 +106,7 @@
   })
 
   window.addEventListener('click', function (event) {
-    const point = {x: event.clientX, y: event.clientY}
+    const point = { x: event.clientX, y: event.clientY }
     points.push(point)
     renderPoint(point)
     if (mode === 0) {
@@ -157,7 +148,7 @@
     context.save()
     context.beginPath()
     context.fillStyle = 'red'
-    const {x, y} = point
+    const { x, y } = point
     context.arc(x, y, 4, 0, 2 * Math.PI)
     context.fill()
     context.restore()
