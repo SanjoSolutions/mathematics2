@@ -44,11 +44,17 @@
     .menu-button:active {
       background-color: hsl(0deg, 0%, 70%);
     }
+
+    .menu-button--active,
+    .menu-button--active:hover,
+    .menu-button--active:active {
+      background-color: hsl(0deg, 0%, 60%);
+    }
   </style>
 </head>
 <body>
 <div class="menu">
-  <div class="menu-button">A</div>
+  <div class="menu-button menu-button--active">A</div>
   <div class="menu-button">B</div>
   <div class="menu-button">C</div>
 </div>
@@ -67,11 +73,27 @@
     if (target.classList.contains('menu-button')) {
       event.stopPropagation()
       const $menuButton = target
-      const index = $menuButtons.indexOf($menuButton)
-      mode = index
-      reset()
+      if (!$menuButton.classList.contains('menu-button--active')) {
+        const index = $menuButtons.indexOf($menuButton)
+        mode = index
+        makeMenuButtonActive($menuButton)
+        reset()
+      }
     }
   })
+
+  function makeMenuButtonActive($menuButton) {
+    makeMenuButtonsUnactive()
+    $menuButton.classList.add('menu-button--active')
+  }
+
+  function makeMenuButtonsUnactive() {
+    $menuButtons.forEach(makeMenuButtonUnactive)
+  }
+
+  function makeMenuButtonUnactive($menuButton) {
+    $menuButton.classList.remove('menu-button--active')
+  }
 
   function reset() {
     points = []
